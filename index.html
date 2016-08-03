@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width,inital-scale=1"/>
+	<link rel="stylesheet" type="text/css" href="./css/bootstrap-3.3.6/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="./css/styles.css">
+
+</head>
+<body>
+	<div class="page">
+		<header class="header">
+			<nav>
+				<ul id="oul">
+					<li><a id="index" href="#">首页</a></li>
+					<li><a id="news" href="https://github.com/qqxu">Github</a></li>
+					<li><a id="afterMarket" href="http://write.blog.csdn.net/postlist">博客</a></li>
+					<li><a id="contact" href="#">联系</a></li>
+				</ul>
+			</nav>
+		</header>
+		<section class="main">
+			<!-- 右侧固定宽度区域，必须放在自适应区域前面 -->
+			<div class="siderBar">
+				<div class="txtShow">
+					<span id="leftTime"></span>
+				</div>
+				
+			</div>
+			<!-- 自适应区域 -->
+			<div class="mainContent">
+				<!-- 图片轮播 -->
+				<div id="container">
+				    <div id="list" style="left: -600px;">
+				        <img src="./imgs/5.jpg" alt="1"/>
+				        <img src="./imgs/1.jpg" alt="1"/>
+				        <img src="./imgs/2.jpg" alt="2"/>
+				        <img src="./imgs/3.jpg" alt="3"/>
+				        <img src="./imgs/4.jpg" alt="4"/>
+				        <img src="./imgs/5.jpg" alt="5"/>
+				        <img src="./imgs/1.jpg" alt="5"/>
+				    </div>
+				    <div id="buttons">
+				        <span index="1" class="on"></span>
+				        <span index="2"></span>
+				        <span index="3"></span>
+				        <span index="4"></span>
+				        <span index="5"></span>
+				    </div>
+				    <a href="javascript:;" id="prev" class="arrow">&lt;</a>
+				    <a href="javascript:;" id="next" class="arrow">&gt;</a>
+				</div>
+				<div id="videoContent">
+					<video src="" width="320" height="240" controls>
+						<source src="http://www.youtube.com/v/F9Bo89m2f6g&hl=en&fs=1" type="video/mp4">
+
+					</video>
+					<video width="320" height="240" controls>
+				    <source src="/assets_tutorials/media/Shaun-the-Sheep-The-Movie-Official-Trailer.mp4" type="video/mp4">
+				    <source src="/assets_tutorials/media/Shaun-the-Sheep-The-Movie-Official-Trailer.ogg" type="video/ogg">
+				Your browser does not support the video tag.
+				</video>
+				</div>
+			</div>
+			
+		</section>
+		<footer class="text-center">
+			<p class="text-muted">Copyright &copy;&nbsp;2016 <a href="https://github.com/qqxu">qqxu10</a></p>	
+		</footer>
+	</div>
+	<script type="text/javascript" src="./js/toolJs.js"></script>
+	
+	
+	<script type="text/javascript">
+		window.onload=function(){
+			/*跨浏览器事件处理，能力检测：IE事件,DOM0级，DOM2级*/
+			var eventUtil={
+				addHandler:function(element,type,handler){
+			             if(element.addEventListener){
+			             	//DOM2级
+			             	element.addEventListener(type,handler,false)
+			              }else if(element.attachEvent){
+			              	//IE事件处理
+			              	element.attachEvent("on"+type,handler)
+			              }
+			              else{
+			              	//DOM0级
+			              	element["on"+type]=handler;
+			              }
+			       },
+			       removeHandler:function(element,type,handler){
+			             if(element.removeEventListener){
+			             	element.removeEventListener(type,handler,false)
+			              }else if(element.attachEvent){
+			              	element.detachEvent("on"+type,handler)
+			              }
+			              else{
+			              	element["on"+type]=null;
+			              }
+			       }
+			}
+			//调用倒计时函数
+			showTime();
+
+
+		    var container = document.getElementById('container');
+            var list = document.getElementById('list');
+            var buttons = document.getElementById('buttons').getElementsByTagName('span');
+            var prev = document.getElementById('prev');
+            var next = document.getElementById('next');
+            var index = 1;
+            var len = 5;
+            var animated = false;
+            var interval = 3000;
+            var timer;
+
+
+            function animate (offset) {
+                if (offset == 0) {
+                    return;
+                }
+                animated = true;
+                var time = 300;
+                var inteval = 10;
+                var speed = offset/(time/inteval);
+                var left = parseInt(list.style.left) + offset;
+
+                var go = function (){
+                    if ( (speed > 0 && parseInt(list.style.left) < left) || (speed < 0 && parseInt(list.style.left) > left)) {
+                        list.style.left = parseInt(list.style.left) + speed + 'px';
+                        setTimeout(go, inteval);
+                    }
+                    else {
+                        list.style.left = left + 'px';
+                        if(left>-200){
+                            list.style.left = -600 * len + 'px';
+                        }
+                        if(left<(-600 * len)) {
+                            list.style.left = '-600px';
+                        }
+                        animated = false;
+                    }
+                }
+                go();
+            }
+
+            function showButton() {
+                for (var i = 0; i < buttons.length ; i++) {
+                    if( buttons[i].className == 'on'){
+                        buttons[i].className = '';
+                        break;
+                    }
+                }
+                buttons[index - 1].className = 'on';
+            }
+
+            function play() {
+                timer = setTimeout(function () {
+                    next.onclick();
+                    play();
+                }, interval);
+            }
+            function stop() {
+                clearTimeout(timer);
+            }
+
+            next.onclick = function () {
+                if (animated) {
+                    return;
+                }
+                if (index == 5) {
+                    index = 1;
+                }
+                else {
+                    index += 1;
+                }
+                animate(-600);
+                showButton();
+            }
+            prev.onclick = function () {
+                if (animated) {
+                    return;
+                }
+                if (index == 1) {
+                    index = 5;
+                }
+                else {
+                    index -= 1;
+                }
+                animate(600);
+                showButton();
+            }
+
+            for (var i = 0; i < buttons.length; i++) {
+                buttons[i].onclick = function () {
+                    if (animated) {
+                        return;
+                    }
+                    if(this.className == 'on') {
+                        return;
+                    }
+                    var myIndex = parseInt(this.getAttribute('index'));
+                    var offset = -600 * (myIndex - index);
+
+                    animate(offset);
+                    index = myIndex;
+                    showButton();
+                }
+            }
+
+            container.onmouseover = stop;
+            container.onmouseout = play;
+
+            play();
+
+			
+		
+		}
+	
+
+	</script>
+</body>
+</html>
